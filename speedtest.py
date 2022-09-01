@@ -12,13 +12,13 @@ PROMISED_UP = 100.0
 PROMISED_DOWN = 700.0
 
 
-CONS_API_KEY = "ZH8bxiYyJ6TujX79V0q7vcZAb"
-CONS_API_SECRET = "4j7imhjhs06dOMRVF3qAvrMfdBGkDtWeV5DEWhz8WmAmK8hOT4"
-BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAAMafgEAAAAAEntAG7k42kT7Fue9IEWuOB5My1U%3DFfgwf5HCavTNT34QD4ec5u31otIQrGPvKNr5Iv1rNqm9AQijjt"
-ACCESS_TOKEN = "1541797946152427523-FpaeMjiXZXdC5DQ1HTjlJ2KjefJGom"
-AT_SECRET = "wb3rCVyRvj3pzstY1frFytT4wELbbsp13gzPqMjZaMOmH"
-CLIENT_ID = "bk1BRWYtdEdoTVhFdHVtb21QOWg6MTpjaQ"
-CLIENT_SECRET = "KrXVjUdSOjWXAWE_h4ABWUdkOsT1gdrX4tGvAH44HpFZX0xaHB"
+TW_CONS_API_KEY = os.environ["TW_CONS_API_KEY"]
+TW_CONS_API_SECRET = os.environ["TW_CONS_API_SECRET"]
+TW_BEARER_TOKEN = os.environ["TW_BEARER_TOKEN"]
+TW_ACCESS_TOKEN = os.environ["TW_ACCESS_TOKEN"]
+TW_AT_SECRET = os.environ["TW_AT_SECRET"]
+TW_CLIENT_ID = os.environ["TW_CLIENT_ID"]
+TW_CLIENT_SECRET = os.environ["TW_CLIENT_SECRET"]
 
 
 class InternetSpeedTwitterBot:
@@ -57,11 +57,11 @@ class InternetSpeedTwitterBot:
 
 
     def tweet_my_provider(self):
-        client = tweepy.Client(bearer_token=BEARER_TOKEN)
-        client = tweepy.Client(consumer_key=CONS_API_KEY,
-                               consumer_secret=CONS_API_SECRET,
-                               access_token=ACCESS_TOKEN,
-                               access_token_secret=AT_SECRET)
+        client = tweepy.Client(consumer_key=TW_CONS_API_KEY,
+                               consumer_secret=TW_CONS_API_SECRET,
+                               access_token=TW_ACCESS_TOKEN,
+                               access_token_secret=TW_AT_SECRET,
+                               bearer_token=TW_BEARER_TOKEN)
 
         response = client.create_tweet(text=f"Hey Internet Service Provider, my internet speed isn't as promised."
                              f"\nIt's currently;"
@@ -72,6 +72,20 @@ class InternetSpeedTwitterBot:
                              f"\nWhat gives?")
         print("Tweet sent. All done. Goodbye.")
 
+    def tweet_my_speed(self):
+        client = tweepy.Client(consumer_key=TW_CONS_API_KEY,
+                               consumer_secret=TW_CONS_API_SECRET,
+                               access_token=TW_ACCESS_TOKEN,
+                               access_token_secret=TW_AT_SECRET,
+                               bearer_token=TW_BEARER_TOKEN)
+        
+        response = client.create_tweet(text=f"Hey Internet Service Provider, I'm very happy with my speed today!"
+                             f"\nIt's currently;"
+                             f"\nDown: {self.current_down}Mbps, Up: {self.current_up}Mbps"
+                             f"\n(Ping: {self.ping}ms, Jitter: {self.jitter}ms)"
+                             f"\nKeep up the good work :)")
+        print("Tweet sent. All done. Goodbye.")
+
 
 auto_checker = InternetSpeedTwitterBot()
 auto_checker.get_internet_speed()
@@ -80,4 +94,5 @@ if auto_checker.current_down < auto_checker.promised_down or auto_checker.curren
     print("Slow speeds, tweeting ISP!")
     auto_checker.tweet_my_provider()
 else:
-    print("Speed's good today! Ending application. Goodbye.")
+    print("Speed's good today!")
+    auto_checker.tweet_my_speed()
